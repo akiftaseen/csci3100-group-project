@@ -28,7 +28,7 @@ export default function Home() {
             Sign up
           </Link>
           <Link className='button w-full px-6 py-3 sm:w-auto' href='/login'>
-            Log in
+            One-click login
           </Link>
         </div>
       </main>

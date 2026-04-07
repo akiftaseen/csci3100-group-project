@@ -4,89 +4,53 @@ import classNames from 'classnames'
 import { useRouter } from 'next/router'
 
 import { geistMono, geistSans } from '@/styles/fonts'
-import Input from '@/components/form/Input'
 import SubmitButton from '@/components/form/SubmitButton'
-import { LoginError, LoginErrorType, useLogin } from '@/hooks/useLogin'
 import { PageWithLayout } from '@/types/layout'
 import { ApiProvider, useApi } from '@/hooks/useApi'
+import { exportKey, generateRandomKeyPair } from '@/utils/frontend/e2e'
 
 const Login: PageWithLayout = () => {
   const router = useRouter()
   const api = useApi()
 
-  const [formErrors, setFormErrors] = useState<{
-    general?: string
-    username?: string
-    password?: string
-  }>({})
+  const [generalError, setGeneralError] = useState<string>()
+  const [isLoading, setIsLoading] = useState(false)
 
-  const { login, isLoading } = useLogin({
-    api,
-    onSuccess: () => {
-      router.push('/dashboard')
-    },
-    onError: (error) => {
-      if (error instanceof LoginError) {
-        if (error.type === LoginErrorType.UserNotFound) {
-          setFormErrors((prev) => ({
-            ...prev,
-            username: 'Username not found',
-          }))
-        } else if (error.type === LoginErrorType.InvalidCredentials) {
-          setFormErrors((prev) => ({
-            ...prev,
-            password: 'Invalid password',
-          }))
-        }
-        return
+  const handleOneClickLogin = useCallback(async () => {
+    setGeneralError(undefined)
+    setIsLoading(true)
+
+    try {
+      const uek = await generateRandomKeyPair()
+      const publicKey = await exportKey(uek.publicKey)
+
+      const response = await api.fetch('/auth/quick-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ publicKey }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Quick login failed: ${response.status}`)
       }
 
-      console.error('Login error:', error)
-      setFormErrors((prev) => ({
-        ...prev,
-        general: 'An unexpected error occurred, please try again later',
-      }))
-    },
-  })
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault()
-
-      setFormErrors({})
-
-      const formData = new FormData(e.target as HTMLFormElement)
-      const data = {
-        username: formData.get('username') as string,
-        password: formData.get('password') as string,
+      const body = (await response.json()) as {
+        id: string
+        username: string
+        expiresAt: string
       }
 
-      let isValid = true
-
-      if (!data.username) {
-        setFormErrors((prev) => ({
-          ...prev,
-          username: 'Username is required',
-        }))
-        isValid = false
-      }
-
-      if (!data.password) {
-        setFormErrors((prev) => ({
-          ...prev,
-          password: 'Password is required',
-        }))
-        isValid = false
-      }
-
-      if (!isValid) {
-        return
-      }
-
-      await login(data).catch(() => {}) // error handled in useLogin
-    },
-    [login],
-  )
+      api.setUser({ id: body.id, username: body.username })
+      api.setUek(uek)
+      api.setTokenExpiresAt(new Date(body.expiresAt))
+      await router.push('/dashboard')
+    } catch (error) {
+      console.error('One-click login error:', error)
+      setGeneralError('Unable to log in right now. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [api, router])
 
   return (
     <div
@@ -98,46 +62,36 @@ const Login: PageWithLayout = () => {
     >
       <main className='row-start-2 flex w-full max-w-md flex-col items-center gap-6 sm:gap-8'>
         <h1 className='border-b-2 border-foreground text-center font-mono text-4xl font-bold'>
-          Log In
+          One-Click Login
         </h1>
 
-        <form onSubmit={handleSubmit} className='w-full space-y-4'>
-          <Input
-            type='text'
-            name='username'
-            label='Username'
-            error={formErrors.username}
-            required
-          />
-          <Input
-            type='password'
-            name='password'
-            label='Password'
-            error={formErrors.password}
-            required
-          />
+        <div className='w-full space-y-4'>
+          <p className='text-center text-sm text-foreground/70'>
+            Continue instantly with a temporary account. No username or password required.
+          </p>
 
-          {formErrors.general && (
+          {generalError && (
             <p className='mx-auto max-w-96 text-center text-sm text-red-500'>
-              {formErrors.general}
+              {generalError}
             </p>
           )}
 
           <div className='pt-4'>
             <SubmitButton
               look='primary'
-              type='submit'
+              type='button'
               className='w-full'
               loading={isLoading}
+              onClick={handleOneClickLogin}
             >
-              Log In
+              Continue in One Click
             </SubmitButton>
           </div>
-        </form>
+        </div>
 
         <div className='pt-2 text-center'>
           <p>
-            Don&apos;t have an account?{' '}
+            Prefer creating a permanent account?{' '}
             <Link href='/signup' className='link underline underline-offset-4'>
               Sign up
             </Link>
