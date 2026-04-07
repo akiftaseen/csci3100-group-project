@@ -4,6 +4,7 @@ import Joi from 'joi'
 import { MongoServerError } from 'mongodb'
 
 import dbConnect from '@/data/api/mongo'
+import { provisionDemoDataForUser } from '@/data/api/demo'
 import User, { UserPublicKeyJWK } from '@/data/api/mongo/models/user'
 import { sessionStore, sessionToCookie } from '@/data/api/session'
 import { UserRole } from '@/types/auth'
@@ -77,6 +78,14 @@ async function POST(req: NextApiRequest, res: NextApiResponse<Data | Error>) {
   }
 
   const session = await sessionStore.createSession(user.id, [UserRole.USER])
+
+  try {
+    await provisionDemoDataForUser(user._id)
+  } catch (error) {
+    // Login should still succeed even if demo seeding fails.
+    console.error('Failed to provision demo data:', error)
+  }
+
   res.setHeader('Set-Cookie', sessionToCookie(session))
   res.status(200).json({
     id: user.id,
