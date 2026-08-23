@@ -2,9 +2,8 @@ import { useCallback, useState } from 'react'
 
 import type { MarketListingFormData } from '@/components/marketplace/NewMarketListingModal'
 import { createMarketListing } from '@/data/frontend/mutations/createMarketListing'
-import { PostMarketListingPayload } from '@/data/frontend/fetches/postMarketListing'
+import { PostMarketListingPayload, PatchMarketListingPayload } from '@/types/demo-actions'
 import { updateMarketListing } from '@/data/frontend/mutations/updateMarketListing'
-import { PatchMarketListingPayload } from '@/data/frontend/fetches/patchMarketListing'
 import { useApi } from '@/hooks/useApi'
 import env from '@/utils/frontend/env'
 

@@ -23,10 +23,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     <div>
       <div
         className={classNames(
-          'max-w-[80%] rounded-lg w-max',
+          'max-w-[80%] rounded-lg w-max border border-transparent',
           isMe
-            ? 'bg-blue-500 text-white ml-auto'
-            : 'bg-background-dark mr-auto',
+            ? 'bg-foreground text-background ml-auto'
+            : 'bg-background-dark border-foreground/5 mr-auto',
           className,
         )}
       >
@@ -35,7 +35,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       <p
         className={classNames(
           'text-xs mt-1 mx-2',
-          isMe ? 'text-white/70 text-right' : 'text-foreground/50',
+          isMe ? 'text-foreground/50 text-right' : 'text-foreground/50',
         )}
       >
         {date.isToday()

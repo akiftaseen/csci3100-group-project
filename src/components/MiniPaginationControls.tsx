@@ -36,12 +36,12 @@ const MiniPaginationControls: React.FC<MiniPaginationControlsProps> = ({
   }, [indexOfFirstItem, indexOfLastItem, numberOfItems, noData])
 
   return (
-    <div className='flex flex-row items-center'>
+    <div className='flex flex-row items-center gap-2'>
       <button
         onClick={onPrevClick}
         disabled={currentPage! <= 1}
         className={classNames(
-          'px-2 py-1',
+          'flex size-8 items-center justify-center rounded-md border border-foreground/15 transition-colors',
           noData || currentPage! <= 1
             ? 'text-foreground/30 cursor-not-allowed'
             : 'text-foreground/70 cursor-pointer hover:text-foreground',
@@ -50,7 +50,7 @@ const MiniPaginationControls: React.FC<MiniPaginationControlsProps> = ({
         <FiChevronLeft />
       </button>
 
-      <span className='mx-2 text-sm'>
+      <span className='min-w-12 whitespace-nowrap text-center text-sm'>
         {!noData ? `${currentPage} of ${totalPages}` : '-- of --'}
       </span>
 
@@ -58,7 +58,7 @@ const MiniPaginationControls: React.FC<MiniPaginationControlsProps> = ({
         onClick={onNextClick}
         disabled={noData || currentPage! >= totalPages!}
         className={classNames(
-          'px-2 py-1',
+          'flex size-8 items-center justify-center rounded-md border border-foreground/15 transition-colors',
           noData || currentPage! >= totalPages!
             ? 'text-foreground/30 cursor-not-allowed'
             : 'text-foreground/70 cursor-pointer hover:text-foreground',

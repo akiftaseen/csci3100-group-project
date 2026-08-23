@@ -1,63 +1,21 @@
 import Link from 'next/link'
-import { useCallback, useState } from 'react'
 import classNames from 'classnames'
-import { useRouter } from 'next/router'
 
 import { geistMono, geistSans } from '@/styles/fonts'
 import SubmitButton from '@/components/form/SubmitButton'
 import { PageWithLayout } from '@/types/layout'
-import { ApiProvider, useApi } from '@/hooks/useApi'
-import { exportKey, generateRandomKeyPair } from '@/utils/frontend/e2e'
+import { ApiProvider } from '@/hooks/useApi'
+import { useDefaultAccountLogin } from '@/hooks/useDefaultAccountLogin'
 
 const Login: PageWithLayout = () => {
-  const router = useRouter()
-  const api = useApi()
-
-  const [generalError, setGeneralError] = useState<string>()
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handleOneClickLogin = useCallback(async () => {
-    setGeneralError(undefined)
-    setIsLoading(true)
-
-    try {
-      const uek = await generateRandomKeyPair()
-      const publicKey = await exportKey(uek.publicKey)
-
-      const response = await api.fetch('/auth/quick-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ publicKey }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Quick login failed: ${response.status}`)
-      }
-
-      const body = (await response.json()) as {
-        id: string
-        username: string
-        expiresAt: string
-      }
-
-      api.setUser({ id: body.id, username: body.username })
-      api.setUek(uek)
-      api.setTokenExpiresAt(new Date(body.expiresAt))
-      await router.push('/dashboard')
-    } catch (error) {
-      console.error('One-click login error:', error)
-      setGeneralError('Unable to log in right now. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [api, router])
+  const { login, isLoading, error } = useDefaultAccountLogin()
 
   return (
     <div
       className={classNames(
         geistSans.variable,
         geistMono.variable,
-        'grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-4 pb-10 gap-8 sm:p-8 md:p-20 md:pb-20 md:gap-16 font-body',
+        'grid min-h-screen grid-rows-[auto_1fr_auto] items-center justify-items-center gap-8 p-4 pb-10 font-body sm:p-8 md:gap-16 md:p-20 md:pb-20',
       )}
     >
       <main className='row-start-2 flex w-full max-w-md flex-col items-center gap-6 sm:gap-8'>
@@ -67,12 +25,13 @@ const Login: PageWithLayout = () => {
 
         <div className='w-full space-y-4'>
           <p className='text-center text-sm text-foreground/70'>
-            Continue instantly with a temporary account. No username or password required.
+            Continue with the default jade.explorer account. No username,
+            password, or account creation required.
           </p>
 
-          {generalError && (
+          {error && (
             <p className='mx-auto max-w-96 text-center text-sm text-red-500'>
-              {generalError}
+              {error}
             </p>
           )}
 
@@ -82,7 +41,7 @@ const Login: PageWithLayout = () => {
               type='button'
               className='w-full'
               loading={isLoading}
-              onClick={handleOneClickLogin}
+              onClick={login}
             >
               Continue in One Click
             </SubmitButton>

@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import TextareaAutosize from 'react-textarea-autosize'
 
-import type { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
+import type { MarketListingSearchResult } from '@/types/market'
 const AttachmentSendPreview = dynamic(
   () => import('@/components/chat/AttachmentSendPreview'),
   { ssr: false },
@@ -136,7 +136,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   }, [messageInputRef])
 
   return (
-    <div className='border-t-2 border-foreground/10 bg-background p-2 md:p-4'>
+    <div className='border-t-2 border-foreground/10 bg-background p-3'>
       {/* Attachment preview */}
       {attachment?.type === 'general' && (
         <AttachmentSendPreview
@@ -173,7 +173,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             ref={messageInputRef}
             name='message'
             className={classNames(
-              'max-h-40 min-h-10 flex-1 resize-none rounded-md border border-foreground/20 bg-background px-3 py-2',
+              'max-h-40 min-h-9 flex-1 resize-none rounded-md border border-foreground/20 bg-background px-3 py-1.5 text-sm outline-none transition-colors focus:border-foreground/50',
               wasRequestedToDelete && 'pointer-events-none opacity-50',
             )}
             placeholder='Type a message...'
@@ -186,7 +186,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           />
           <label
             className={classNames(
-              'flex size-10 cursor-pointer items-center justify-center rounded-full bg-foreground/10 transition-colors hover:bg-foreground/20',
+              'flex size-9 cursor-pointer items-center justify-center rounded-full bg-foreground/10 transition-colors hover:bg-foreground/20',
               wasRequestedToDelete && 'pointer-events-none opacity-50',
             )}
           >
@@ -200,7 +200,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           </label>
           <button
             type='submit'
-            className='flex size-10 items-center justify-center rounded-full border-2 border-background-dark bg-foreground text-background disabled:opacity-50'
+            className='flex size-9 items-center justify-center rounded-full border border-foreground bg-foreground text-background transition-opacity disabled:opacity-40'
             disabled={
               wasRequestedToDelete || (!messageInput.trim() && !attachment)
             }

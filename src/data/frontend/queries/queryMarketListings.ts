@@ -1,2 +1,11 @@
-// Currently, the query makes no modifications to the data sent from the server
-export { getMarketListings as queryMarketListings } from "@/data/frontend/fetches/getMarketListings"
+import type { SearchMarketListingsOptions } from '@/types/market'
+import type { Api } from '@/hooks/useApi'
+import { searchDemoListings } from '@/data/mock/demo'
+
+export async function queryMarketListings(
+  api: Api,
+  options: SearchMarketListingsOptions = {},
+) {
+  void api
+  return searchDemoListings(options)
+}

@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
-import { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
+import { MarketListingSearchResult } from '@/types/market'
 import { formatCurrency, formatTruncatedList } from '@/utils/format'
 import { getCountryNameById } from '@/utils/countries'
 

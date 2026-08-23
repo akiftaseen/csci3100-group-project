@@ -132,7 +132,9 @@ const DashboardLayout: PageWithLayout<DashboardLayoutProps> = ({
           <Sidebar navItems={navItems} value={activePage ?? ''} />
         </div>
         {/* Main content */}
-        <main className='flex-1 p-6 pb-16 sm:ml-64 sm:pb-0'>{children}</main>
+        <main className='w-full min-w-0 p-6 pb-16 sm:ml-64 sm:w-[calc(100%-16rem)] sm:pb-0'>
+          {children}
+        </main>
       </div>
 
       {/* Mobile Bottom Navigation */}

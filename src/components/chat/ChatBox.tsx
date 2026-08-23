@@ -60,7 +60,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         </div>
 
         <button
-          className='flex size-10 items-center justify-center rounded-full bg-foreground/10 transition-colors hover:bg-foreground/20 hover:text-red-500'
+          className='flex size-9 items-center justify-center rounded-full bg-foreground/10 transition-colors hover:bg-foreground/20 hover:text-red-500'
           onClick={onDeleteChat}
           disabled={isDeleting}
         >

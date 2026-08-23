@@ -53,8 +53,8 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
       : [1]
 
   return (
-    <div className='mt-8 flex flex-row items-center justify-center gap-4'>
-      <p className='text-sm text-foreground-light sm:ml-4'>
+    <div className='mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm'>
+      <p className='whitespace-nowrap text-foreground-light'>
         {!noData
           ? `Showing ${indexOfFirstItem + 1}-${Math.min(
               indexOfLastItem + 1,
@@ -63,57 +63,45 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
           : 'Showing -- of -- items'}
       </p>
 
-      <div className='flex overflow-hidden rounded-md border border-foreground-light/50'>
+      <div className='flex items-center gap-2'>
         <button
           onClick={onPrevClick}
           disabled={indexOfFirstItem === 0}
+          aria-label='Previous page'
           className={classNames(
-            'px-3 sm:px-4 py-2 border-r border-foreground-light/50 flex items-center',
+            'flex size-8 items-center justify-center rounded-md border border-foreground-light/50 transition-colors hover:bg-background-dark',
             indexOfFirstItem === 0 && 'opacity-50 cursor-not-allowed',
           )}
         >
-          <FiChevronLeft className='mr-1' />
+          <FiChevronLeft />
         </button>
 
-        <div className='flex'>
+        <div className='flex items-center gap-1.5'>
           {pages.map((page) => (
-            <label
+            <button
               key={page}
+              type='button'
               className={classNames(
-                'px-3 sm:px-4 py-2 cursor-pointer',
+                'flex size-8 items-center justify-center rounded-md border text-sm transition-colors',
                 currentPage === page
-                  ? 'rounded bg-gray-500/25 border-foreground-light border text-foreground font-bold'
-                  : 'hover:bg-background-light',
+                  ? 'border-foreground bg-foreground text-background font-semibold'
+                  : 'border-foreground-light/50 hover:bg-background-dark',
               )}
-              onChange={
-                currentPage === page || !onPageClick
-                  ? undefined
-                  : () => onPageClick(page)
-              }
+              onClick={() => onPageClick?.(page)}
+              aria-current={currentPage === page ? 'page' : undefined}
+              disabled={currentPage === page}
             >
-              <span>{page}</span>
-              <input
-                type='radio'
-                name='page-number'
-                value={page}
-                checked={noData || currentPage === page}
-                readOnly={currentPage === page || !onPageClick}
-                onChange={
-                  currentPage === page || !onPageClick
-                    ? undefined
-                    : () => onPageClick(page)
-                }
-                className='hidden'
-              />
-            </label>
+              {page}
+            </button>
           ))}
         </div>
 
         <button
           onClick={onNextClick}
           disabled={noData || indexOfLastItem === numberOfItems - 1}
+          aria-label='Next page'
           className={classNames(
-            'px-3 sm:px-4 py-2 border-l-2 border-foreground/10 flex items-center',
+            'flex size-8 items-center justify-center rounded-md border border-foreground-light/50 transition-colors hover:bg-background-dark',
             noData ||
               (indexOfLastItem === numberOfItems - 1 &&
                 'opacity-50 cursor-not-allowed'),
@@ -123,23 +111,22 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         </button>
       </div>
 
-      {/* Spacer */}
-      <div className='w-4'></div>
-
-      <p className='text-sm text-foreground/70'>Items per page:</p>
-      <select
-        value={pageSize}
-        onChange={
-          onPageSizeChange
-            ? (e) => onPageSizeChange(Number(e.target.value))
-            : undefined
-        }
-        className='ml-2 self-stretch rounded-md border border-foreground-light/50 bg-background px-2 py-1 text-foreground'
-      >
-        <option value={20}>20</option>
-        <option value={50}>50</option>
-        <option value={100}>100</option>
-      </select>
+      <label className='flex items-center gap-2 whitespace-nowrap text-foreground/70'>
+        <span>Items per page</span>
+        <select
+          value={pageSize}
+          onChange={
+            onPageSizeChange
+              ? (e) => onPageSizeChange(Number(e.target.value))
+              : undefined
+          }
+          className='h-8 rounded-md border border-foreground-light/50 bg-background px-2 text-foreground'
+        >
+          <option value={20}>20</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
+      </label>
     </div>
   )
 }

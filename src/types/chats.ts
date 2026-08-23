@@ -1,5 +1,3 @@
-import type mongoose from 'mongoose'
-
 export enum ChatMessageType {
 	Text = 'text',
 	Attachment = 'attachment',
@@ -7,9 +5,9 @@ export enum ChatMessageType {
 }
 
 export interface ChatWithPopulatedFields {
-	id: mongoose.Types.ObjectId
+	id: string
 	participants: {
-		id: mongoose.Types.ObjectId
+		id: string
 		username: string
 		publicKey: JsonWebKey
 	}[]

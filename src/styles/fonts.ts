@@ -1,11 +1,4 @@
-import { Geist, Geist_Mono } from 'next/font/google'
-
-export const geistSans = Geist({
-	variable: '--font-geist-sans',
-	subsets: ['latin'],
-})
-
-export const geistMono = Geist_Mono({
-	variable: '--font-geist-mono',
-	subsets: ['latin'],
-})
+// Keep the existing font hooks without requiring a network request at build time.
+// The global stylesheet provides the matching system-font fallbacks.
+export const geistSans = { variable: '' }
+export const geistMono = { variable: '' }

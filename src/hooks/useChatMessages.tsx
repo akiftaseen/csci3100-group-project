@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { ClientChatMessage } from '@/types/chats'
-import { PostChatMessagePayload } from '@/data/frontend/fetches/postChatMessage'
+import { PostChatMessagePayload } from '@/types/demo-actions'
 import { QueryKeys } from '@/types/queries'
 import { sendChatMessage } from '@/data/frontend/mutations/sendChatMessage'
 import { isDev } from '@/utils/frontend/env'

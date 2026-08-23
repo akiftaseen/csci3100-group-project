@@ -9,7 +9,7 @@ dayjs.extend(relativeTime)
 import DashboardLayout from '@/layouts/DashboardLayout'
 import NewMarketListingModal from '@/components/marketplace/NewMarketListingModal'
 import { queryMarketListings } from '@/data/frontend/queries/queryMarketListings'
-import { mockListings } from '@/data/mock/listings'
+import { demoListings } from '@/data/mock/demo'
 import { useApi } from '@/hooks/useApi'
 import { formatCurrency, formatNumber } from '@/utils/format'
 import { PageWithLayout } from '@/types/layout'
@@ -20,27 +20,25 @@ import { QueryKeys } from '@/types/queries'
 
 // Calculate market statistics
 const calculateMarketStats = () => {
-  const totalListings = mockListings.length
+  const totalListings = demoListings.length
 
   // Calculate completed trades (just a mock example - approximately 30% of listings)
   const completedTrades = Math.floor(totalListings * 0.3)
 
   // Calculate average price
-  const totalValue = mockListings.reduce((sum, item) => {
-    return sum + parseFloat(item.price.replace('$', '').replace(',', ''))
-  }, 0)
+  const totalValue = demoListings.reduce(
+    (sum, item) => sum + item.priceInCents,
+    0,
+  )
 
   const averagePrice = Math.round(totalValue / totalListings)
   const tradeVolume = Math.round(totalValue * 0.3) // Assuming 30% of items were traded
 
   // Calculate category distribution
   const categories: Record<string, number> = {}
-  mockListings.forEach((item) => {
-    if (categories[item.category]) {
-      categories[item.category]++
-    } else {
-      categories[item.category] = 1
-    }
+  demoListings.forEach((item) => {
+    const category = item.categories[0] ?? 'other'
+    categories[category] = (categories[category] ?? 0) + 1
   })
 
   const categoryPercentages: Record<string, number> = {}
@@ -176,28 +174,28 @@ const Home: PageWithLayout<HomeProps> = ({
         {/* Market Summary Card */}
         <section className='rounded-lg border-2 border-foreground/10 bg-background-light p-6 shadow-sm'>
           <h3 className='mb-4 text-xl font-bold'>Market Summary</h3>
-          <div className='space-y-2'>
+          <div className='space-y-2 text-sm sm:text-base'>
             {/* Using useMemo to avoid recalculating on every render */}
             {useMemo(() => {
               const stats = calculateMarketStats()
               return (
                 <>
-                  <div className='flex justify-between'>
+                  <div className='flex items-start justify-between gap-3'>
                     <span>Active Listings</span>
-                    <span className='font-mono font-bold'>
+                    <span className='shrink-0 whitespace-nowrap font-mono font-bold'>
                       {listings?.meta.total}
                     </span>
                   </div>
-                  <div className='flex justify-between'>
+                  <div className='flex items-start justify-between gap-3'>
                     <span>Completed Trades</span>
-                    <span className='font-mono font-bold'>
+                    <span className='shrink-0 whitespace-nowrap font-mono font-bold'>
                       {stats.completedTrades}
                     </span>
                   </div>
-                  <div className='flex justify-between'>
+                  <div className='flex items-start justify-between gap-3'>
                     <span>Average Trade Value</span>
-                    <span className='font-mono font-bold'>
-                      ${stats.averagePrice}
+                    <span className='shrink-0 whitespace-nowrap font-mono font-bold'>
+                      {formatCurrency(stats.averagePrice)}
                     </span>
                   </div>
                 </>
@@ -205,7 +203,7 @@ const Home: PageWithLayout<HomeProps> = ({
             }, [listings])}
           </div>
           <button
-            className='button mt-4 w-full'
+            className='button mt-4 w-full whitespace-nowrap'
             onClick={() => setShowStatsPopup(true)}
           >
             View More Stats
@@ -214,22 +212,22 @@ const Home: PageWithLayout<HomeProps> = ({
 
         <section className='rounded-lg border-2 border-foreground/10 bg-background-light p-6 shadow-sm'>
           <h3 className='mb-4 text-xl font-bold'>Your Activity</h3>
-          <div className='space-y-2'>
-            <div className='flex justify-between'>
+          <div className='space-y-2 text-sm sm:text-base'>
+            <div className='flex items-start justify-between gap-3'>
               <span>Current Listings</span>
-              <span className='font-mono font-bold'>3</span>
+              <span className='shrink-0 font-mono font-bold'>3</span>
             </div>
-            <div className='flex justify-between'>
+            <div className='flex items-start justify-between gap-3'>
               <span>Pending Trades</span>
-              <span className='font-mono font-bold'>1</span>
+              <span className='shrink-0 font-mono font-bold'>1</span>
             </div>
-            <div className='flex justify-between'>
+            <div className='flex items-start justify-between gap-3'>
               <span>Messages</span>
-              <span className='font-mono font-bold'>5</span>
+              <span className='shrink-0 font-mono font-bold'>5</span>
             </div>
           </div>
           <Link
-            className='button-primary mt-4 flex w-full items-center justify-center gap-2'
+            className='button-primary mt-4 flex w-full items-center justify-center gap-2 whitespace-nowrap'
             href='/dashboard/marketplace/create'
           >
             <FiPlus /> Create New Listing
@@ -242,13 +240,14 @@ const Home: PageWithLayout<HomeProps> = ({
           <h3 className='text-xl font-bold'>Recent Listings</h3>
         </div>
         <div className='overflow-x-auto'>
-          <table className='min-w-full'>
+          <table className='w-full table-fixed'>
             <thead className='border-b-2 border-foreground/10 [&_th:first-child]:pl-0 [&_th:last-child]:pr-0 [&_th]:px-2'>
               <tr>
-                <th className='py-3 text-left'>Item</th>
-                <th className='py-3 text-left'>Price</th>
-                <th className='py-3 text-left'>Seller</th>
-                <th className='py-3 text-left'>Listed</th>
+                <th className='w-[36%] py-3 text-left lg:w-[30%]'>Item</th>
+                <th className='w-[22%] py-3 text-left lg:w-[18%]'>Price</th>
+                <th className='hidden py-3 text-left lg:table-cell lg:w-[22%]'>Seller</th>
+                <th className='w-[24%] py-3 text-left lg:w-[18%]'>Listed</th>
+                <th className='w-[18%] py-3 text-right lg:w-[12%]'>Action</th>
               </tr>
             </thead>
             <tbody className='[&_td:first-child]:pl-0 [&_td:last-child]:pr-0 [&_td]:px-2'>
@@ -263,18 +262,18 @@ const Home: PageWithLayout<HomeProps> = ({
                       {listing.description.split('\n')[0]}
                     </p>
                   </td>
-                  <td className='font-mono'>
+                  <td className='whitespace-nowrap font-mono text-sm'>
                     {formatCurrency(listing.priceInCents)}
                   </td>
-                  <td>
+                  <td className='hidden truncate lg:table-cell'>
                     {listing.author.username ?? listing.author.id.toString()}
                   </td>
-                  <td className='text-foreground/70'>
+                  <td className='whitespace-nowrap text-sm text-foreground/70'>
                     {dayjs(listing.listedAt).fromNow()}
                   </td>
                   <td className='text-right'>
                     <Link
-                      className='button mx-auto h-auto'
+                      className='button ml-auto !h-8 !px-3 text-xs'
                       href={`/dashboard/marketplace/${listing.id}`}
                     >
                       View

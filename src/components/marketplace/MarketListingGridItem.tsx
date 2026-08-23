@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
-import type { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
+import type { MarketListingSearchResult } from '@/types/market'
 import { formatCurrency } from '@/utils/format'
 
 export interface MarketListingGridListItemProps {
@@ -35,11 +35,11 @@ const MarketListingGridListItem: React.FC<MarketListingGridListItemProps> = ({
 }) => {
   return (
     <div
-      className='flex h-[490px] w-full cursor-pointer flex-col overflow-hidden rounded-lg border-2 border-foreground/10 bg-background-light text-left shadow-sm transition-shadow hover:shadow-md'
+      className='flex h-[460px] w-full cursor-pointer flex-col overflow-hidden rounded-lg border-2 border-foreground/10 bg-background-light text-left shadow-sm transition-shadow hover:shadow-md'
       onClick={onClick}
     >
       {/* Item image - fixed height */}
-      <div className='h-48 shrink-0 overflow-hidden bg-foreground/5'>
+      <div className='h-44 shrink-0 overflow-hidden bg-foreground/5'>
         {listing.pictures.length > 0 ? (
           <Image
             src={listing.pictures[0]}
@@ -85,7 +85,7 @@ const MarketListingGridListItem: React.FC<MarketListingGridListItemProps> = ({
           </button>
         </div>
 
-        <p className='mt-1 font-mono text-lg font-bold'>
+        <p className='mt-1 whitespace-nowrap font-mono text-base font-bold'>
           {formatCurrency(listing.priceInCents)}
         </p>
 
@@ -106,7 +106,7 @@ const MarketListingGridListItem: React.FC<MarketListingGridListItemProps> = ({
 
         {/* Push buttons to the bottom with mt-auto */}
         <div className='mt-auto flex flex-col pt-4'>
-          <span className='mb-3 text-xs text-foreground/50'>
+          <span className='mb-3 whitespace-nowrap text-xs text-foreground/50'>
             Listed: {dayjs(listing.listedAt).fromNow()}
           </span>
           <div className='flex justify-between gap-4'>
@@ -116,7 +116,7 @@ const MarketListingGridListItem: React.FC<MarketListingGridListItemProps> = ({
                 <div className='flex-1' />
 
                 <button
-                  className='button-primary flex-1 gap-1'
+                  className='button-primary !h-8 flex-1 gap-1 px-3 text-xs'
                   onClick={(e) => {
                     e.stopPropagation() // Prevent triggering parent onClick
                     onChat?.()

@@ -20,8 +20,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
 import { PageWithLayout } from '@/types/layout'
-import type { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
-import type { SearchMarketListingsOptions } from '@/data/api/mongo/queries/market/searchMarketListings'
+import type { MarketListingSearchResult, SearchMarketListingsOptions } from '@/types/market'
 import { queryMarketListings } from '@/data/frontend/queries/queryMarketListings'
 import { QueryKeys } from '@/types/queries'
 import { countries, getFeaturedCountries } from '@/utils/countries'

@@ -1,6 +1,6 @@
-import { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
+import { MarketListingSearchResult } from '@/types/market'
 import { Api } from '@/hooks/useApi'
-import { deriveKey, importKey } from '@/utils/frontend/e2e'
+import { getDemoSharedKey } from '@/data/mock/demo'
 import dynamic from 'next/dynamic'
 import React, { useCallback, useContext, useState } from 'react'
 const HoveringChatBox = dynamic(() => import('@/components/HoveringChatBox'), {
@@ -60,6 +60,7 @@ export const HoveringChatBoxProvider: React.FC<React.PropsWithChildren> = ({
 }
 
 export const useHoveringChatBox = ({ api }: { api: Api }) => {
+  void api
   const context = useContext(HoveringChatBoxContext)
   if (!context) {
     throw new Error(
@@ -70,20 +71,9 @@ export const useHoveringChatBox = ({ api }: { api: Api }) => {
   const show = useCallback(
     async (listing: MarketListingSearchResult) => {
       context.show(listing)
-      if (!api.uek) {
-        return
-      }
-
-      const myPrivateKey = api.uek.privateKey
-      const theirPublicKey = await importKey(
-        listing.author.publicKey,
-        'jwk',
-        [],
-      )
-      const sharedKey = await deriveKey(theirPublicKey, myPrivateKey)
-      context.setSharedKey(sharedKey)
+      context.setSharedKey(await getDemoSharedKey())
     },
-    [context, api.uek],
+    [context],
   )
 
   return {

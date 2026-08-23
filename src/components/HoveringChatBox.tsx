@@ -7,11 +7,11 @@ dayjs.extend(relativeTime)
 
 import { ClientChat } from '@/types/chats'
 import { QueryKeys } from '@/types/queries'
-import { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
+import { MarketListingSearchResult } from '@/types/market'
 import { queryChatByRecipient } from '@/data/frontend/queries/queryChatByRecipient'
 import ChatThread from '@/components/chat/ChatThread'
 import { sendChatMessage } from '@/data/frontend/mutations/sendChatMessage'
-import { PostChatMessagePayload } from '@/data/frontend/fetches/postChatMessage'
+import { PostChatMessagePayload } from '@/types/demo-actions'
 import { createNewChatByUserId } from '@/data/frontend/mutations/createNewChatByUserId'
 import { useApi } from '@/hooks/useApi'
 import Link from 'next/link'

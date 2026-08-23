@@ -96,7 +96,7 @@ const MessagesLayout: PageWithLayout<MessagesLayoutProps> = ({ children }) => {
         {/* Conversation List */}
         <div
           className={classNames(
-            'flex flex-col flex-nowrap md:w-1/3 md:border-r-2 border-foreground/10 h-full bg-background-light md:relative md:z-20 fixed inset-x-0 md:top-0 top-16 md:bottom-0 bottom-14 z-[5] overflow-hidden md:overflow-auto',
+            'flex flex-col flex-nowrap md:w-2/5 lg:w-1/3 md:border-r-2 border-foreground/10 h-full bg-background-light md:relative md:z-20 fixed inset-x-0 md:top-0 top-16 md:bottom-0 bottom-14 z-[5] overflow-hidden md:overflow-auto',
             mobileChatVisible && 'hidden md:flex',
           )}
         >
@@ -107,10 +107,11 @@ const MessagesLayout: PageWithLayout<MessagesLayoutProps> = ({ children }) => {
               <h3 className='text-lg font-bold'>Conversations</h3>
               <button
                 onClick={openNewChatModal}
-                className='hidden items-center gap-2 rounded-md border border-foreground-light/25 bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-background-dark md:flex'
+                className='hidden size-8 shrink-0 items-center justify-center rounded-md border border-foreground-light/25 bg-background text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-background-dark md:flex'
+                aria-label='New conversation'
+                title='New conversation'
               >
                 <FiPlus />
-                <span>New</span>
               </button>
             </div>
 
@@ -163,11 +164,11 @@ const MessagesLayout: PageWithLayout<MessagesLayoutProps> = ({ children }) => {
                     {otherParty(chat)?.username.charAt(0).toUpperCase() ?? '–'}
                   </div>
                   <div className='min-w-0 flex-1'>
-                    <div className='flex items-baseline justify-between'>
+                    <div className='flex items-baseline justify-between gap-2'>
                       <h4 className='truncate font-medium'>
                         {otherParty(chat)?.username}
                       </h4>
-                      <span className='text-xs text-foreground/70'>
+                      <span className='shrink-0 whitespace-nowrap text-[11px] text-foreground/60'>
                         {chat.lastMessage?.sentAt
                           ? dayjs(chat.lastMessage.sentAt).fromNow()
                           : ''}
@@ -207,7 +208,7 @@ const MessagesLayout: PageWithLayout<MessagesLayoutProps> = ({ children }) => {
           </div>
 
           {/* Pagination controls */}
-          <div className='sticky bottom-0 z-10 flex h-12 min-h-12 items-center justify-center border-t border-foreground/25 bg-background-light'>
+          <div className='sticky bottom-0 z-10 flex h-[62px] min-h-[62px] items-center justify-center border-t border-foreground/25 bg-background-light'>
             <MiniPaginationControls
               indexOfFirstItem={indexOfFirstConversation}
               indexOfLastItem={indexOfLastConversation}
@@ -221,7 +222,7 @@ const MessagesLayout: PageWithLayout<MessagesLayoutProps> = ({ children }) => {
         {/* Chat Area */}
         <div
           className={classNames(
-            'w-full md:w-2/3 flex flex-col',
+            'w-full md:w-3/5 lg:w-2/3 flex flex-col',
             !mobileChatVisible ? 'hidden md:flex' : 'flex',
           )}
         >

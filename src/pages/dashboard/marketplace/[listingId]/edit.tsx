@@ -10,7 +10,7 @@ import EditMarketListingModal from '@/components/marketplace/EditMarketListingMo
 import { PageWithLayout } from '@/types/layout'
 import { QueryKeys } from '@/types/queries'
 import { useApi } from '@/hooks/useApi'
-import { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
+import { MarketListingSearchResult } from '@/types/market'
 import { PaginatedResult } from '@/types/common'
 import { queryMarketListingById } from '@/data/frontend/queries/queryMarketListingById'
 

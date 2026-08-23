@@ -1,98 +1,53 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation } from '@tanstack/react-query'
 
-import { ab2base64 } from "@/utils/frontend"
-import type { Api } from "@/hooks/useApi"
-import {
-	exportKey,
-	encryptUserEncryptionKey,
-	generateRandomKeyPair,
-} from "@/utils/frontend/e2e"
-import { toPasskey } from "@/utils/frontend/e2e/auth"
-import { generateDeterministicSymmetricKey } from "@/utils/frontend/e2e/kdf"
-
+import type { Api } from '@/hooks/useApi'
+import { DEMO_USER } from '@/data/mock/demo'
+import { generateRandomKeyPair } from '@/utils/frontend/e2e'
 
 export interface UseSignUpOptions {
-	api: Api,
-	throwOnError?: boolean | ((error: Error) => boolean)
-	onSuccess?: () => void
-	onError?: (error: Error) => void
+  api: Api
+  throwOnError?: boolean | ((error: Error) => boolean)
+  onSuccess?: () => void
+  onError?: (error: Error) => void
 }
 
 export enum SignUpErrorType {
-	UsernameTaken = 'USERNAME_TAKEN',
-	UnexpectedError = 'UNEXPECTED_ERROR',
+  UsernameTaken = 'USERNAME_TAKEN',
+  UnexpectedError = 'UNEXPECTED_ERROR',
 }
 
 export class SignUpError extends Error {
-	constructor(public type: SignUpErrorType) {
-		super(type)
-		this.name = 'SignUpError'
-	}
+  constructor(public type: SignUpErrorType) {
+    super(type)
+    this.name = 'SignUpError'
+  }
 }
 
 export const useSignUp = ({
-	api,
-	throwOnError = false,
-	onSuccess,
-	onError,
+  api,
+  throwOnError = false,
+  onSuccess,
+  onError,
 }: UseSignUpOptions) => {
-	const mutation = useMutation({
-		mutationFn: async (
-			data: { username: string; password: string, licenseKey: string },
-		) => {
-			const uek = await generateRandomKeyPair()
-			const jwk = await exportKey(uek.publicKey)
-			const uekEncryptionKey = await generateDeterministicSymmetricKey(
-				`${data.username}:${data.password}`,
-				process.env.NEXT_PUBLIC_UEK_DERIVATION_SALT ?? data.username,
-				['encrypt'],
-			)
-			const encryptedUek = await encryptUserEncryptionKey(
-				uek.privateKey,
-				uekEncryptionKey,
-			)
+  const mutation = useMutation({
+    mutationFn: async (data: {
+      username: string
+      password: string
+      licenseKey: string
+    }) => {
+      void data
+      api.setUser(DEMO_USER)
+      api.setUek(await generateRandomKeyPair())
+    },
+    throwOnError,
+    onSuccess,
+    onError,
+  })
 
-			const payload = {
-				username: data.username,
-				passkey: await toPasskey(data.username, data.password),
-				publicKey: jwk,
-				encryptedUserEncryptionKey: ab2base64(encryptedUek),
-				licenseKey: data.licenseKey,
-			}
-
-			const response = await api.fetch('/auth/signup', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(payload),
-			})
-
-			if (response.status === 409) {
-				// 409 Conflict
-				throw new SignUpError(SignUpErrorType.UsernameTaken)
-			}
-
-			if (!response.ok) {
-				throw new SignUpError(SignUpErrorType.UnexpectedError)
-			}
-
-			const body = await response.json()
-
-			api.setUser({
-				id: body.id,
-				username: data.username,
-			})
-			api.setUek(uek)
-			api.setTokenExpiresAt(new Date(body.expiresAt))
-		},
-		throwOnError,
-		onSuccess,
-		onError,
-	})
-
-	return {
-		signUp: mutation.mutateAsync,
-		isLoading: mutation.isPending,
-		isError: mutation.isError,
-		error: mutation.error,
-	}
+  return {
+    signUp: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  }
 }

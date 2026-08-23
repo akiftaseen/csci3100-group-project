@@ -1,15 +1,20 @@
 import Link from 'next/link'
 import classNames from 'classnames'
 
+import SubmitButton from '@/components/form/SubmitButton'
+import { ApiProvider } from '@/hooks/useApi'
+import { useDefaultAccountLogin } from '@/hooks/useDefaultAccountLogin'
 import { geistMono, geistSans } from '@/styles/fonts'
 
 export default function Home() {
+  const { login, isLoading, error } = useDefaultAccountLogin()
+
   return (
     <div
       className={classNames(
         geistSans.variable,
         geistMono.variable,
-        'grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-4 pb-10 gap-8 sm:p-8 md:p-20 md:pb-20 md:gap-16 font-body',
+        'grid min-h-screen grid-rows-[auto_1fr_auto] items-center justify-items-center gap-8 p-4 pb-10 font-body sm:p-8 md:gap-16 md:p-20 md:pb-20',
       )}
     >
       <main className='row-start-2 flex w-full max-w-3xl flex-col items-center gap-6 sm:gap-8'>
@@ -27,10 +32,17 @@ export default function Home() {
           >
             Sign up
           </Link>
-          <Link className='button w-full px-6 py-3 sm:w-auto' href='/login'>
+          <SubmitButton
+            type='button'
+            className='w-full px-6 py-3 sm:w-auto'
+            loading={isLoading}
+            onClick={login}
+          >
             One-click login
-          </Link>
+          </SubmitButton>
         </div>
+
+        {error && <p className='text-center text-sm text-red-500'>{error}</p>}
       </main>
       <footer className='row-start-3 mt-8 px-4 text-xs text-foreground/50 sm:mt-0 sm:px-0 sm:text-sm'>
         <p>
@@ -58,3 +70,5 @@ export default function Home() {
     </div>
   )
 }
+
+Home.getLayout = (page: React.ReactNode) => <ApiProvider>{page}</ApiProvider>

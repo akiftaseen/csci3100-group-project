@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import type { ClientMarketListingChatMessage } from '@/types/chats'
-import type { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
+import type { MarketListingSearchResult } from '@/types/market'
 import { formatCurrency } from '@/utils/format'
 import ChatMessage from './ChatMessage'
 import dynamic from 'next/dynamic'

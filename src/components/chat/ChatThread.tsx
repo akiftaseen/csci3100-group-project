@@ -2,8 +2,8 @@ import React, { useCallback, useLayoutEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 
 import { ChatMessageType, ClientChatMessage } from '@/types/chats'
-import { MarketListingSearchResult } from '@/data/api/mongo/queries/market'
-import { PostChatMessagePayload } from '@/data/frontend/fetches/postChatMessage'
+import { MarketListingSearchResult } from '@/types/market'
+import { PostChatMessagePayload } from '@/types/demo-actions'
 import { isSupportedImage } from '@/utils/frontend'
 import { useApi } from '@/hooks/useApi'
 

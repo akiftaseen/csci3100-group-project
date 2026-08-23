@@ -1,12 +1,13 @@
-import { getMarketListingById } from "@/data/frontend/fetches/getMarketListingById"
-import { MarketListingSearchResult } from "@/data/api/mongo/queries/market"
+import { MarketListingSearchResult } from "@/types/market"
 import type { Api } from "@/hooks/useApi"
+import { demoListings } from '@/data/mock/demo'
 
 export async function queryMarketListingById(
 	api: Api,
 	id: string,
 ): Promise<MarketListingSearchResult> {
-	if (!api.user) throw new Error('User or key not found')
-
-	return await getMarketListingById(api, id)
+	void api
+	const listing = demoListings.find((item) => item.id.toString() === id)
+	if (!listing) throw new Error('Demo listing not found')
+	return listing
 }

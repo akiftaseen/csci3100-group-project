@@ -1,6 +1,6 @@
-import { encryptChatMessage } from "@/utils/frontend/e2e/chat"
-import { postChatMessage, PostChatMessagePayload } from "@/data/frontend/fetches/postChatMessage"
+import { PostChatMessagePayload } from "@/types/demo-actions"
 import type { Api } from "@/hooks/useApi"
+import { addDemoMessage } from '@/data/mock/demo'
 
 export async function sendChatMessage(
 	api: Api,
@@ -8,7 +8,8 @@ export async function sendChatMessage(
 	message: PostChatMessagePayload,
 	sharedKey: CryptoKey,
 ) {
-	const encryptedMessage = await encryptChatMessage(message, sharedKey)
-	console.log("Encrypted message", encryptedMessage)
-	await postChatMessage(api, chatId, encryptedMessage)
+	void sharedKey
+	if (message.type === 'text') {
+		addDemoMessage(chatId, api.user?.id ?? '', message.content)
+	}
 }
